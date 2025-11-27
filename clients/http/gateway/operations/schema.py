@@ -1,9 +1,10 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import HttpUrl
+from pydantic import HttpUrl, Field
 
 from tools.camel_model import CamelModel
+from tools.fakers import fake
 
 
 class OperationType(StrEnum):
@@ -70,8 +71,8 @@ class GetOperationReceiptResponseSchema(CamelModel):
 
 
 class MakeOperationRequestSchema(CamelModel):
-    status: OperationStatus
-    amount: float
+    status: OperationStatus = Field(default_factory=lambda :fake.enum(OperationStatus))
+    amount: float = Field(default_factory=fake.amount)
     card_id: str
     account_id: str
 
@@ -109,7 +110,7 @@ class MakeTransferOperationResponseSchema(CamelModel):
 
 
 class MakePurchaseOperationRequestSchema(MakeOperationRequestSchema):
-    category: str
+    category: str = Field(default_factory=lambda :fake.category)
 
 
 class MakePurchaseOperationResponseSchema(CamelModel):
