@@ -1,24 +1,34 @@
-from typing import TypedDict
-
 from httpx import Response
 
 from clients.http.base_client import HTTPClient
-
-
-class IssueVirtualCardRequestDict(TypedDict):
-    userId: str
-    accountId: str
-
-
-class IssuePhysicalCardRequestDict(TypedDict):
-    userId: str
-    accountId: str
+from clients.http.gateway.cards.schema import (
+    IssueVirtualCardRequestSchema,
+    IssueVirtualCardResponseSchema,
+    IssuePhysicalCardRequestSchema,
+    IssuePhysicalCardResponseSchema
+)
 
 
 class CardsGatewayHTTPClient(HTTPClient):
 
-    def issue_virtual_card_api(self, request: IssueVirtualCardRequestDict) -> Response:
-        return self.post("/api/v1/cards/issue-virtual-card", json=request)
+    def issue_virtual_card_api(self, request: IssueVirtualCardRequestSchema) -> Response:
+        return self.post(
+            "/api/v1/cards/issue-virtual-card",
+            json=request.model_dump(by_alias=True)
+        )
 
-    def issue_physical_card_api(self, request: IssuePhysicalCardRequestDict) -> Response:
-        return self.post("/api/v1/cards/issue-physical-card", json=request)
+    def issue_physical_card_api(self, request: IssuePhysicalCardRequestSchema) -> Response:
+        return self.post(
+            "/api/v1/cards/issue-physical-card",
+            json=request.model_dump(by_alias=True)
+        )
+
+    def issue_virtual_card(self, user_id: str, account_id: str) -> IssueVirtualCardResponseSchema:
+        request = IssueVirtualCardRequestSchema(user_id=user_id, account_id=account_id)
+        response = self.issue_virtual_card_api(request)
+        return IssueVirtualCardResponseSchema.model_validate_json(response.text)
+
+    def issue_physical_card(self, user_id: str, account_id: str) -> IssuePhysicalCardResponseSchema:
+        request = IssuePhysicalCardRequestSchema(user_id=user_id, account_id=account_id)
+        response = self.issue_physical_card_api(request)
+        return IssuePhysicalCardResponseSchema.model_validate_json(response.text)
