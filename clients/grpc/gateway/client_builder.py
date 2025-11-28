@@ -9,7 +9,7 @@ from clients.grpc.gateway.users.client import UsersGatewayGRPCClient
 
 class GRPCClientBuilder:
     def __init__(self):
-        self._channel: str | None = "http://localhost:9003/"
+        self._channel: str | None = "localhost:9003"
 
     def base_url(self, url: str):
         self._channel = url
