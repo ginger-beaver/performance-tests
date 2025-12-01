@@ -1,10 +1,11 @@
-from clients.http.gateway.client_builder import HTTPClientBuilder
+from clients.http.gateway import UsersGatewayHTTPClient, AccountsGatewayHTTPClient, DocumentsGatewayHTTPClient
+from clients.http.gateway.client_factory import HTTPClientFactory, build_gateway_http_client
 
-builder = HTTPClientBuilder()
+factory = HTTPClientFactory(factory_function=build_gateway_http_client)
 
-users_gateway_client = builder.build_users_gateway()
-accounts_gateway_client = builder.build_accounts_gateway()
-documents_gateway_client = builder.build_documents_gateway()
+users_gateway_client = factory.create(UsersGatewayHTTPClient)
+accounts_gateway_client = factory.create(AccountsGatewayHTTPClient)
+documents_gateway_client = factory.create(DocumentsGatewayHTTPClient)
 
 create_user_response = users_gateway_client.create_user()
 print('Create user response:', create_user_response)
