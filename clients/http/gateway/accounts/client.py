@@ -1,6 +1,6 @@
 from httpx import Response, QueryParams
 
-from clients.http.base_client import HTTPClient
+from clients.http.base_client import HTTPClient, HTTPClientExtensions
 from clients.http.gateway.accounts.schema import (
     GetAccountsQuerySchema,
     GetAccountsResponseSchema,
@@ -20,7 +20,8 @@ class AccountsGatewayHTTPClient(HTTPClient):
     def get_accounts_api(self, query: GetAccountsQuerySchema):
         return self.get(
             "/api/v1/accounts",
-            params=QueryParams(**query.model_dump(by_alias=True))
+            params=QueryParams(**query.model_dump(by_alias=True)),
+            extensions=HTTPClientExtensions(route="/api/v1/accounts")
         )
 
     def open_deposit_account_api(self, request: OpenDepositAccountRequestSchema) -> Response:
