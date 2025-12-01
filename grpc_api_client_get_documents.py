@@ -1,10 +1,11 @@
-from clients.grpc.gateway.client_builder import GRPCClientBuilder
+from clients.grpc.gateway import UsersGatewayGRPCClient, AccountsGatewayGRPCClient, DocumentsGatewayGRPCClient
+from clients.grpc.gateway.client_factory import GRPCClientFactory, build_gateway_grpc_client
 
-grpc_builder = GRPCClientBuilder()
+factory = GRPCClientFactory(build_gateway_grpc_client)
 
-users_gateway_client = grpc_builder.build_users_gateway()
-accounts_gateway_client = grpc_builder.build_accounts_gateway()
-documents_gateway_client = grpc_builder.build_documents_gateway()
+users_gateway_client = factory.create(UsersGatewayGRPCClient)
+accounts_gateway_client = factory.create(AccountsGatewayGRPCClient)
+documents_gateway_client = factory.create(DocumentsGatewayGRPCClient)
 
 create_user_response = users_gateway_client.create_user()
 print('Create user response:', create_user_response)
