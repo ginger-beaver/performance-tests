@@ -1,12 +1,10 @@
-from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, TypedDict
 
 from httpx import Client, URL, Response, QueryParams
 
 
-@dataclass
-class HTTPClientExtensions:
-    route: Optional[str] = None
+class HTTPClientExtensions(TypedDict, total=False):
+    route: str
 
 
 class HTTPClient:
