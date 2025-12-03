@@ -48,6 +48,13 @@ class SeedsBuilder:
         )
         return SeedCardResult(card_id=response.card.id)
 
+    def build_virtual_card_result(self, user_id: str, account_id: str) -> SeedCardResult:
+        response = self.cards_gateway_client.issue_virtual_card(
+            user_id=user_id,
+            account_id=account_id
+        )
+        return SeedCardResult(card_id=response.card.id)
+
     def build_top_up_operation_result(self, card_id: str, account_id: str) -> SeedOperationResult:
         response = self.operations_gateway_client.make_top_up_operation(
             card_id=card_id,
@@ -78,8 +85,12 @@ class SeedsBuilder:
         return SeedAccountResult(
             account_id=response.account.id,
             physical_cards=[
-                self.build_physical_card_result(user_id=user_id, account_id=response.account.id)
+                self.build_physical_card_result(user_id=user_id, account_id=account_id)
                 for _ in range(plan.physical_cards.count)
+            ],
+            virtual_cards=[
+                self.build_virtual_card_result(user_id=user_id, account_id=account_id)
+                for _ in range(plan.virtual_cards.count)
             ],
             top_up_operations=[
                 self.build_top_up_operation_result(card_id=card_id, account_id=account_id)
@@ -102,6 +113,10 @@ class SeedsBuilder:
                 self.build_physical_card_result(user_id=user_id, account_id=account_id)
                 for _ in range(plan.physical_cards.count)
             ],
+            virtual_cards=[
+                self.build_virtual_card_result(user_id=user_id, account_id=account_id)
+                for _ in range(plan.virtual_cards.count)
+            ],
             top_up_operations=[
                 self.build_top_up_operation_result(card_id=card_id, account_id=account_id)
                 for _ in range(plan.top_up_operations.count)
@@ -114,23 +129,24 @@ class SeedsBuilder:
 
     def build_user(self, plan: SeedUsersPlan) -> SeedUserResult:
         response = self.users_gateway_client.create_user()
+        user_id = response.user.id
 
         return SeedUserResult(
             user_id=response.user.id,
             savings_accounts=[
-                self.build_savings_account_result(user_id=response.user.id)
+                self.build_savings_account_result(user_id=user_id)
                 for _ in range(plan.savings_accounts.count)
             ],
             deposit_accounts=[
-                self.build_deposit_account_result(user_id=response.user.id)
+                self.build_deposit_account_result(user_id=user_id)
                 for _ in range(plan.deposit_accounts.count)
             ],
             debit_card_accounts=[
-                self.build_debit_card_account_result(plan=plan.debit_card_accounts, user_id=response.user.id)
+                self.build_debit_card_account_result(plan=plan.debit_card_accounts, user_id=user_id)
                 for _ in range(plan.debit_card_accounts.count)
             ],
             credit_card_accounts=[
-                self.build_credit_card_account_result(plan=plan.credit_card_accounts, user_id=response.user.id)
+                self.build_credit_card_account_result(plan=plan.credit_card_accounts, user_id=user_id)
                 for _ in range(plan.credit_card_accounts.count)
             ]
         )
