@@ -9,8 +9,8 @@ from seeds.schema.result import SeedsResult
 
 class SeedsScenario(ABC):
 
-    def __init__(self, seeder_builder_func):
-        self.seeder_builder_func: Callable[[], SeedsBuilder] = seeder_builder_func
+    def __init__(self, seeder_builder_func: Callable[[], SeedsBuilder]):
+        self.seeder_builder: SeedsBuilder = seeder_builder_func()
 
     @property
     @abstractmethod
@@ -29,6 +29,5 @@ class SeedsScenario(ABC):
         return load_seeds_result(scenario=self.scenario)
 
     def build(self) -> None:
-        seeder_builder = self.seeder_builder_func()
-        result = seeder_builder.build(self.plan)
+        result = self.seeder_builder.build(self.plan)
         self.save(result)
