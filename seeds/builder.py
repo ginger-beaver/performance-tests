@@ -69,6 +69,20 @@ class SeedsBuilder:
         )
         return SeedOperationResult(operation_id=response.operation.id)
 
+    def build_transfer_operation_result(self, card_id: str, account_id: str) -> SeedOperationResult:
+        response = self.operations_gateway_client.make_transfer_operation(
+            card_id=card_id,
+            account_id=account_id
+        )
+        return SeedOperationResult(operation_id=response.operation.id)
+
+    def build_cash_withdrawal_operation_result(self, card_id: str, account_id: str) -> SeedOperationResult:
+        response = self.operations_gateway_client.make_cash_withdrawal_operation(
+            card_id=card_id,
+            account_id=account_id
+        )
+        return SeedOperationResult(operation_id=response.operation.id)
+
     def build_savings_account_result(self, user_id: str) -> SeedAccountResult:
         response = self.accounts_gateway_client.open_savings_account(user_id=user_id)
         return SeedAccountResult(account_id=response.account.id)
@@ -99,6 +113,14 @@ class SeedsBuilder:
             purchase_operations=[
                 self.build_purchase_operation_result(card_id=card_id, account_id=account_id)
                 for _ in range(plan.purchase_operations.count)
+            ],
+            transfer_operations=[
+                self.build_transfer_operation_result(card_id=card_id, account_id=account_id)
+                for _ in range(plan.transfer_operations.count)
+            ],
+            cash_withdrawal_operations=[
+                self.build_cash_withdrawal_operation_result(card_id=card_id, account_id=account_id)
+                for _ in range(plan.cash_withdrawal_operations.count)
             ]
         )
 
@@ -124,6 +146,14 @@ class SeedsBuilder:
             purchase_operations=[
                 self.build_purchase_operation_result(card_id=card_id, account_id=account_id)
                 for _ in range(plan.purchase_operations.count)
+            ],
+            transfer_operations=[
+                self.build_transfer_operation_result(card_id=card_id, account_id=account_id)
+                for _ in range(plan.transfer_operations.count)
+            ],
+            cash_withdrawal_operations=[
+                self.build_cash_withdrawal_operation_result(card_id=card_id, account_id=account_id)
+                for _ in range(plan.cash_withdrawal_operations.count)
             ]
         )
 
