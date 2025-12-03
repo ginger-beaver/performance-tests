@@ -196,7 +196,7 @@ def build_grpc_seeds_builder() -> SeedsBuilder:
     )
 
 
-def build_http_seeds_builder():
+def build_http_seeds_builder() -> SeedsBuilder:
     http_factory = HTTPClientFactory(lambda: build_gateway_http_client())
 
     return SeedsBuilder(
