@@ -11,7 +11,7 @@ logger = logging.getLogger("locust")
 
 @events.init.add_listener
 def on_locust_init(environment, **kwargs):
-    logger.info("Locust init hook executed")
+    logger.info("Add GRPCClientFactory to locust environment")
 
     environment.factory = GRPCClientFactory(
         lambda: build_gateway_locust_grpc_client(environment)
