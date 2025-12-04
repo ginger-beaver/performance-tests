@@ -71,7 +71,7 @@ class GetOperationReceiptResponseSchema(CamelModel):
 
 
 class MakeOperationRequestSchema(CamelModel):
-    status: OperationStatus = Field(default_factory=lambda :fake.enum(OperationStatus))
+    status: OperationStatus = Field(default_factory=lambda: fake.enum(OperationStatus))
     amount: float = Field(default_factory=fake.amount)
     card_id: str
     account_id: str
@@ -110,7 +110,7 @@ class MakeTransferOperationResponseSchema(CamelModel):
 
 
 class MakePurchaseOperationRequestSchema(MakeOperationRequestSchema):
-    category: str = Field(default_factory=lambda :fake.category)
+    category: str = Field(default_factory=fake.category)
 
 
 class MakePurchaseOperationResponseSchema(CamelModel):
