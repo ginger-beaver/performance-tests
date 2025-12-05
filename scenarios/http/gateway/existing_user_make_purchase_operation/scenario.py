@@ -1,5 +1,3 @@
-import logging
-
 from locust import task, events
 from locust.env import Environment
 
@@ -9,11 +7,9 @@ from seeds.scenarios.existing_user_make_purchase_operation import ExistingUserMa
 from seeds.schema.result import SeedUserResult
 from tools.locust.user import LocustBaseUser
 
-logger = logging.getLogger("locust")
 
 @events.init.add_listener
 def init(environment: Environment, **kwargs):
-    logger.info("Add seed data to locust environment")
     seeds_scenario = ExistingUserMakePurchaseOperationSeedsScenario(build_grpc_seeds_builder)
     seeds_scenario.build()
 
