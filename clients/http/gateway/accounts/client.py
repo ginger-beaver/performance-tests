@@ -13,38 +13,39 @@ from clients.http.gateway.accounts.schema import (
     OpenCreditCardAccountRequestSchema,
     OpenCreditCardAccountResponseSchema
 )
+from tools.routes import APIRoutes
 
 
 class AccountsGatewayHTTPClient(HTTPClient):
 
     def get_accounts_api(self, query: GetAccountsQuerySchema):
         return self.get(
-            "/api/v1/accounts",
+            APIRoutes.ACCOUNTS,
             params=QueryParams(**query.model_dump(by_alias=True)),
-            extensions=HTTPClientExtensions(route="/api/v1/accounts")
+            extensions=HTTPClientExtensions(route=APIRoutes.ACCOUNTS)
         )
 
     def open_deposit_account_api(self, request: OpenDepositAccountRequestSchema) -> Response:
         return self.post(
-            "/api/v1/accounts/open-deposit-account",
+            f"{APIRoutes.ACCOUNTS}/open-deposit-account",
             json=request.model_dump(by_alias=True)
         )
 
     def open_savings_account_api(self, request: OpenSavingsAccountRequestSchema) -> Response:
         return self.post(
-            "/api/v1/accounts/open-savings-account",
+            f"{APIRoutes.ACCOUNTS}/open-savings-account",
             json=request.model_dump(by_alias=True)
         )
 
     def open_debit_card_account_api(self, request: OpenDebitCardAccountRequestSchema) -> Response:
         return self.post(
-            "/api/v1/accounts/open-debit-card-account",
+            f"{APIRoutes.ACCOUNTS}/open-debit-card-account",
             json=request.model_dump(by_alias=True)
         )
 
     def open_credit_card_account_api(self, request: OpenCreditCardAccountRequestSchema) -> Response:
         return self.post(
-            "/api/v1/accounts/open-credit-card-account",
+            f"{APIRoutes.ACCOUNTS}/open-credit-card-account",
             json=request.model_dump(by_alias=True)
         )
 
