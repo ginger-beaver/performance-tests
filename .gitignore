@@ -2,5 +2,10 @@
 
 .venv
 __pycache__
+
 /dumps/
 /practice_examples/
+
+locust_*.csv
+locust_*.json
+report.html
