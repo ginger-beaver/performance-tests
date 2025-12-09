@@ -1,0 +1,80 @@
+spec:
+  inputs:
+    SCENARIO:
+      type: string
+      default: "./scenarios/grpc/gateway/new_user_get_accounts/v1.0.conf"
+      description: "Locust config file"
+      options:
+        # grpc
+        - ./scenarios/grpc/gateway/existing_user_get_documents/v1.0.conf
+        - ./scenarios/grpc/gateway/existing_user_get_operations/v1.0.conf
+        - ./scenarios/grpc/gateway/existing_user_issue_virtual_card/v1.0.conf
+        - ./scenarios/grpc/gateway/existing_user_make_purchase_operation/v1.0.conf
+        - ./scenarios/grpc/gateway/new_user_get_accounts/v1.0.conf
+        - ./scenarios/grpc/gateway/new_user_get_documents/v1.0.conf
+        - ./scenarios/grpc/gateway/new_user_issue_physical_card/v1.0.conf
+        - ./scenarios/grpc/gateway/new_user_make_top_up_operation/v1.0.conf
+        # http
+        - ./scenarios/http/gateway/existing_user_get_documents/v1.0.conf
+        - ./scenarios/http/gateway/existing_user_get_operations/v1.0.conf
+        - ./scenarios/http/gateway/existing_user_issue_virtual_card/v1.0.conf
+        - ./scenarios/http/gateway/existing_user_make_purchase_operation/v1.0.conf
+        - ./scenarios/http/gateway/new_user_get_accounts/v1.0.conf
+        - ./scenarios/http/gateway/new_user_get_documents/v1.0.conf
+        - ./scenarios/http/gateway/new_user_issue_physical_card/v1.0.conf
+        - ./scenarios/http/gateway/new_user_make_top_up_operation/v1.0.conf
+
+---
+
+stages:
+  - test
+  - deploy
+
+variables:
+  ENV_FILE: .env.ci.local
+  PYTHONPATH: ./:./protos/gen
+
+run-tests:
+  stage: test
+  image: ubuntu:24.04
+  allow_failure: true
+
+  before_script:
+    - apt-get update
+    - apt-get install -y python3.12 python3.12-venv python3-pip git
+    - python3.12 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - git clone https://github.com/Nikita-Filonov/performance-qa-engineer-course.git
+    - pip install -r performance-qa-engineer-course/requirements.txt
+
+  script:
+    - cd performance-qa-engineer-course
+    - python -m services.mock.server.http &
+    - python -m services.mock.server.grpc &
+    - python -m services.gateway.server.http &
+    - python -m services.gateway.server.grpc &
+    - cd ..
+    - locust --config=$[[ inputs.SCENARIO ]] --html=index.html
+
+  artifacts:
+    paths:
+      - index.html
+    expire_in: 7 days
+    when: always
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp index.html public/
+  artifacts:
+    paths:
+      - public
+  needs:
+    - run-tests
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
