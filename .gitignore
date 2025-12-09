@@ -9,3 +9,5 @@ __pycache__
 locust_*.csv
 locust_*.json
 report.html
+
+reports
